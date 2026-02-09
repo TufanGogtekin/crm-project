@@ -1,0 +1,226 @@
+<div class="container mt-4">
+
+  <h1 class="text-center text-primary mb-4 fw-bold">📋 Teklif Yönetimi</h1>
+
+  <div class="row">
+
+    <div class="col-md-12 mb-5">
+      <div class="card shadow border-primary">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">➕ Yeni Teklif Hazırla</h5>
+          <span class="badge bg-white text-primary">Taslak Modu</span>
+        </div>
+        
+        <div class="card-body bg-light">
+          
+          <div class="row mb-3">
+            
+            <div class="col-md-3">
+              <label class="form-label fw-bold">Teklif Kodu</label>
+              <input type="text" class="form-control" placeholder="Örn: TKL-2026-001" [(ngModel)]="offer.code">
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold">Müşteri</label>
+              <select class="form-select" [(ngModel)]="offer.customerId">
+                <option [ngValue]="0" disabled>Seçiniz...</option>
+                <option *ngFor="let c of customerList" [ngValue]="c.id">
+                  {{ c.name }} {{ c.lastName }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold">Hazırlayan Personel</label>
+              <select class="form-select" [(ngModel)]="offer.employeeId">
+                <option [ngValue]="0" disabled>Seçiniz...</option>
+                <option *ngFor="let e of employeeList" [ngValue]="e.id">
+                  {{ e.name }} {{ e.lastName }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold">Teklif Tarihi</label>
+              <input type="date" class="form-control" [(ngModel)]="offer.date">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Açıklama / Notlar</label>
+            <textarea class="form-control" rows="2" 
+                      placeholder="Teklif ile ilgili özel notlar..." [(ngModel)]="offer.description"></textarea>
+          </div>
+
+          <hr>
+
+          <h6 class="text-secondary fw-bold mt-4">🛒 Ürünler & Hizmetler</h6>
+          
+          <table class="table table-bordered table-light shadow-sm">
+            
+            <thead class="table-secondary text-center align-middle">
+              <tr>
+                <th style="width: 35%;">Ürün Adı</th>
+                <th style="width: 15%;">Adet</th>
+                <th style="width: 20%;">Birim Fiyat</th>
+                <th style="width: 20%;">Toplam</th>
+                <th style="width: 10%;">İşlem</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let row of offer.items; let i = index">
+                
+                <td>
+                  <select class="form-select form-select-sm" 
+                          [(ngModel)]="row.productId" 
+                          (change)="onProductChange(i)">
+                    <option [ngValue]="0">Ürün Seçiniz...</option>
+                    <option *ngFor="let p of productList" [ngValue]="p.id">
+                      {{ p.name }}
+                    </option>
+                  </select>
+                </td>
+
+                <td>
+                  <input type="number" class="form-control form-control-sm text-center" 
+                         [(ngModel)]="row.quantity" (change)="calculateRowTotal(i)" min="1">
+                </td>
+
+                <td>
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text">₺</span>
+                    <input type="number" class="form-control text-end" [(ngModel)]="row.price" readonly>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text">₺</span>
+                    <input type="number" class="form-control text-end fw-bold" [(ngModel)]="row.totalAmount" readonly>
+                  </div>
+                </td>
+
+                <td class="text-center">
+                  <button class="btn btn-outline-danger btn-sm" (click)="removeLine(i)">
+                    🗑️ Sil
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="row align-items-center mt-3">
+            <div class="col-md-6">
+              <button class="btn btn-secondary btn-sm" (click)="addNewLine()">
+                ➕ Satır Ekle
+              </button>
+            </div>
+            
+            <div class="col-md-6 text-end">
+              <h4 class="fw-bold text-success">
+                Genel Toplam: {{ grandTotal | number:'1.2-2' }} ₺
+              </h4>
+            </div>
+          </div>
+
+          <div class="d-grid mt-4">
+            <button class="btn btn-primary fw-bold py-2 shadow" (click)="save()">
+              💾 TEKLİFİ KAYDET
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-md-12 d-grid gap-2 mb-4" *ngIf="!isListVisible">
+      <button class="btn btn-dark btn-lg shadow" (click)="getAllOffers()">
+        📂 KAYITLI TEKLİFLERİ LİSTELE
+      </button>
+    </div>
+
+    <div class="col-md-12" *ngIf="isListVisible">
+      <div class="card shadow">
+        
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">📋 Kayıtlı Teklifler</h5>
+          <button class="btn btn-sm btn-outline-light fw-bold" (click)="getAllOffers()">
+            🔄 Listeyi Yenile
+          </button>
+        </div>
+
+        <div class="card-body p-0">
+          
+          <table class="table table-hover table-striped mb-0 text-center align-middle">
+            <thead class="table-secondary">
+              <tr>
+                <th>#</th>
+                <th>Kod</th>
+                <th>Müşteri</th>
+                <th>Tarih</th>
+                <th>Tutar</th>
+                <th>Durum</th>
+                <th style="width: 180px;">İşlemler</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+              <tr *ngIf="isLoading">
+                <td colspan="7" class="text-center py-4">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  <p class="mt-2 text-muted fw-bold">Veriler Yükleniyor...</p>
+                </td>
+              </tr>
+
+              <tr *ngFor="let item of offerList; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td class="fw-bold text-primary">{{ item.code }}</td>
+                
+                <td>{{ item.customerName || item.customerId }}</td> 
+                
+                <td>{{ item.createDate }}</td> 
+                
+                <td class="fw-bold text-success">
+                  {{ item.totalAmount | number:'1.2-2' }} ₺
+                </td>
+
+                <td>
+                  <span class="badge" 
+                        [ngClass]="{
+                          'bg-secondary': item.status === 'DRAFT',
+                          'bg-success': item.status === 'CONVERTED',
+                          'bg-info': item.status === 'SENT'
+                        }">
+                    {{ item.status }}
+                  </span>
+                </td>
+
+                <td>
+                  <span *ngIf="item.status === 'CONVERTED'" class="text-success fw-bold">
+                     ✅ Onaylı
+                  </span>
+
+                  <button *ngIf="item.status !== 'CONVERTED'" 
+                          class="btn btn-warning btn-sm fw-bold shadow-sm" 
+                          (click)="createContract(item.id)">
+                    📄 Sözleşme Yap
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div *ngIf="!isLoading && offerList.length === 0" class="alert alert-info m-3 text-center">
+            Henüz kayıtlı bir teklif yok.
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

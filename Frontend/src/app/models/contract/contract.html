@@ -1,0 +1,53 @@
+<div class="container mt-4">
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary fw-bold">📄 Sözleşme Yönetimi</h2>
+    <button class="btn btn-outline-primary" (click)="getAllContracts()">🔄 Listeyi Yenile</button>
+  </div>
+
+  <div class="card shadow">
+    <div class="card-body p-0">
+      
+      <table class="table table-striped mb-0 text-center align-middle">
+        <thead class="table-secondary">
+          <tr>
+            <th>#</th>
+            <th>Sözleşme Kodu</th>
+            <th>Müşteri</th>
+            <th>Tarih</th>
+            <th>Tutar</th>
+            <th>Durum</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr *ngIf="isLoading">
+            <td colspan="6" class="text-center py-5">
+              <div class="spinner-border text-primary" role="status"></div>
+              <p class="mt-2 fw-bold text-muted">Yükleniyor...</p>
+            </td>
+          </tr>
+
+          <ng-container *ngIf="!isLoading">
+            <tr *ngFor="let item of contractList; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td class="fw-bold">{{ item.code }}</td>
+              <td>{{ item.customerName }}</td>
+              <td>{{ item.contractDate }}</td>
+              <td class="text-success fw-bold">{{ item.grandTotal }} ₺</td>
+              <td><span class="badge bg-success">{{ item.status }}</span></td>
+            </tr>
+          </ng-container>
+
+          <tr *ngIf="!isLoading && contractList.length === 0">
+            <td colspan="6" class="text-center py-4 text-muted">
+              Kayıt bulunamadı.
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>

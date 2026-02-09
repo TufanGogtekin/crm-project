@@ -1,0 +1,179 @@
+<div class="container mt-4">
+
+  <h1 class="text-center text-danger mb-4 fw-bold">📦 Sipariş Yönetimi </h1>
+
+  <div class="row">
+    
+    <div class="col-md-12 mb-5">
+      <div class="card shadow border-danger">
+        <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">➕ Yeni Sipariş Oluştur</h5>
+          <span class="badge bg-white text-danger">Yeni</span>
+        </div>
+        
+        <div class="card-body bg-light">
+          
+          <div class="row mb-3">
+            
+            <div class="col-md-3">
+              <label class="form-label fw-bold">Sipariş Kodu</label>
+              <input type="text" class="form-control" placeholder="Örn: ORD-2026-001" [(ngModel)]="order.code">
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold">Müşteri</label>
+              <select class="form-select" [(ngModel)]="order.customerId">
+                <option [ngValue]="0" disabled>Seçiniz...</option>
+                <option *ngFor="let c of customerList" [ngValue]="c.id">
+                  {{ c.name }} {{ c.lastName }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold">Satış Temsilcisi</label>
+              <select class="form-select" [(ngModel)]="order.employeeId">
+                <option [ngValue]="0" disabled>Seçiniz...</option>
+                <option *ngFor="let e of employeeList" [ngValue]="e.id">
+                  {{ e.name }} {{ e.lastName }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold">Sipariş Tarihi</label>
+              <input type="date" class="form-control" [(ngModel)]="order.orderDate">
+            </div>
+          </div>
+
+          <hr>
+
+          <h6 class="text-secondary fw-bold">🛒 Ürünler & Hizmetler</h6>
+          
+          <table class="table table-bordered table-white shadow-sm">
+            <thead class="table-secondary text-center">
+              <tr>
+                <th style="width: 40%;">Ürün Adı</th>
+                <th style="width: 15%;">Adet</th>
+                <th style="width: 20%;">Birim Fiyat</th>
+                <th style="width: 20%;">Toplam</th>
+                <th style="width: 5%;">Sil</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of order.items; let i = index">
+                
+                <td>
+                  <select class="form-select form-select-sm" [(ngModel)]="row.productId" (change)="onProductChange(i)">
+                    <option [ngValue]="0">Ürün Seç...</option>
+                    <option *ngFor="let p of productList" [ngValue]="p.id">
+                      {{ p.name }}
+                    </option>
+                  </select>
+                </td>
+
+                <td>
+                  <input type="number" class="form-control form-control-sm text-center" 
+                         [(ngModel)]="row.quantity" (change)="calculateRowTotal(i)" min="1">
+                </td>
+
+                <td>
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text">₺</span>
+                    <input type="number" class="form-control text-end" [(ngModel)]="row.unitPrice" readonly>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text">₺</span>
+                    <input type="number" class="form-control text-end fw-bold" [(ngModel)]="row.subTotal" readonly>
+                  </div>
+                </td>
+
+                <td class="text-center">
+                  <button class="btn btn-outline-danger btn-sm" (click)="removeLine(i)">
+                    ❌
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="row align-items-center mt-3">
+            <div class="col-md-6">
+              <button class="btn btn-outline-secondary btn-sm" (click)="addNewLine()">
+                ➕ Satır Ekle
+              </button>
+            </div>
+            
+            <div class="col-md-6 text-end">
+              <h4 class="fw-bold text-success">
+                Genel Toplam: {{ grandTotal | number:'1.2-2' }} ₺
+              </h4>
+            </div>
+          </div>
+
+          <div class="d-grid mt-4">
+            <button class="btn btn-success fw-bold py-2 shadow" (click)="save()">
+              💾 SİPARİŞİ ONAYLA VE KAYDET
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-md-12">
+      <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">📋 Tüm Siparişler</h5>
+        </div>
+        <div class="card-body p-0">
+          
+          <table class="table table-hover table-striped mb-0 text-center align-middle">
+            <thead class="table-secondary">
+              <tr>
+                <th>#</th>
+                <th>Sipariş Kodu</th>
+                <th>Müşteri</th>
+                <th>Personel</th>
+                <th>Tarih</th>
+                <th>Tutar</th>
+                <th>Durum</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of orderList; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td class="fw-bold text-primary">{{ item.code }}</td>
+                
+                <td>{{ item.customerName || item.customerId }}</td> 
+                <td>{{ item.employeeName || item.employeeId }}</td>
+                
+                <td>{{ item.orderDate }}</td>
+                
+                <td class="fw-bold text-success">
+                  {{ item.totalAmount | number:'1.2-2' }} ₺
+                </td>
+
+                <td>
+                  <span class="badge bg-warning text-dark">
+                    {{ item.status }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div *ngIf="orderList.length === 0" class="alert alert-info m-3 text-center">
+            Henüz kayıtlı bir sipariş bulunmuyor.
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

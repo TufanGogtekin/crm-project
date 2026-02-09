@@ -1,0 +1,174 @@
+<div class="container mt-5">
+  
+  <h2 class="text-center mb-4">📅 Aktivite & Randevu Yönetimi</h2>
+
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      
+      <div class="card shadow-lg border-0 mb-5">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0 fw-bold">Yeni Etkinlik Planla</h5>
+        </div>
+
+        <div class="card-body">
+          
+          <div class="row mb-3">
+            <div class="col-md-8">
+              <label class="form-label fw-bold">Konu (Subject)</label>
+              <input type="text" 
+                     class="form-control" 
+                     placeholder="Örn: Yıllık Lisans Yenileme Görüşmesi" 
+                     [(ngModel)]="subject">
+            </div>
+            
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Aktivite Tipi</label>
+              <select class="form-select" [(ngModel)]="type">
+                <option value="" disabled selected>Seçiniz...</option>
+                <option value="CALL">📞 Telefon Görüşmesi</option>
+                <option value="MEETING">🤝 Yüz Yüze Toplantı</option>
+                <option value="ONLINE">💻 Online (Zoom/Meet)</option>
+                <option value="EMAIL">📧 E-Posta</option>
+                <option value="VISIT">🚗 Müşteri Ziyareti</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Tarih</label>
+              <input type="date" class="form-control" [(ngModel)]="date">
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Başlangıç Saati</label>
+              <input type="time" class="form-control" [(ngModel)]="hour">
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Süre (Dakika)</label>
+              <div class="input-group">
+                <input type="number" 
+                       class="form-control" 
+                       placeholder="60" 
+                       [(ngModel)]="duration">
+                <span class="input-group-text">dk</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label class="form-label fw-bold">İlgili Müşteri</label>
+              <select class="form-select" [(ngModel)]="customerId">
+                <option [ngValue]="0" disabled selected>Müşteri Seç...</option>
+                <option *ngFor="let c of customerList" [ngValue]="c.id">
+                  {{ c.name }} {{ c.lastName }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Atanan Personel</label>
+              <select class="form-select" [(ngModel)]="employeeId">
+                <option [ngValue]="0" disabled selected>Personel Seç...</option>
+                <option *ngFor="let e of employeeList" [ngValue]="e.id">
+                  {{ e.name }} {{ e.lastName }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Durum</label>
+              <select class="form-select" [(ngModel)]="status">
+                <option value="PLANNED">⏳ Planlandı</option>
+                <option value="COMPLETED">✅ Tamamlandı</option>
+                <option value="CANCELED">❌ İptal Edildi</option>
+                <option value="CUSTOMERLOST">🏃‍♂️ Müşteri Kaybedildi</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold">Notlar / Açıklama</label>
+            <textarea class="form-control" 
+                      rows="3" 
+                      placeholder="Görüşme detayları veya hazırlık notları..." 
+                      [(ngModel)]="description"></textarea>
+          </div>
+
+          <div class="d-flex gap-2 justify-content-end">
+             <button type="button" class="btn btn-info text-white fw-bold" (click)="save()">
+              💾 Randevuyu Kaydet
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="list()">
+              📋 Listeyi Getir
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <div *ngIf="activityList.length > 0" class="card shadow animate__animated animate__fadeIn">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">Planlanan Aktiviteler ({{ activityList.length }})</h5>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-hover table-striped mb-0 align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Tarih / Saat</th>
+                <th>Tür</th>
+                <th>Konu</th>
+                <th>Müşteri</th>
+                <th>Süre</th>
+                <th>Durum</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let act of activityList">
+                
+                <td>
+                  <div class="fw-bold">{{ act.date }}</div>
+                  <small class="text-muted">⏰ {{ act.hour }}</small>
+                </td>
+
+                <td>
+                  <span class="badge" 
+                        [ngClass]="{
+                          'bg-primary': act.type === 'MEETING',
+                          'bg-info': act.type === 'CALL',
+                          'bg-warning text-dark': act.type === 'EMAIL',
+                          'bg-success': act.type === 'ONLINE',
+                          'bg-secondary': act.type === 'VISIT'
+                        }">
+                    {{ act.type }}
+                  </span>
+                </td>
+
+                <td class="fw-bold">{{ act.subject }}</td>
+                
+                <td>ID: {{ act.customerId }}</td> 
+
+                <td>{{ act.duration }} dk</td>
+
+                <td>
+                   <span class="badge rounded-pill"
+                         [ngClass]="{
+                           'bg-success': act.status === 'COMPLETED',
+                           'bg-warning text-dark': act.status === 'PLANNED',
+                           'bg-danger': act.status === 'CANCELED'
+                         }">
+                     {{ act.status }}
+                   </span>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,128 @@
+<div class="container mt-5 mb-5">
+    
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="bi bi-list-task"></i> Yeni Görev Oluştur</h3>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="row">
+                <div class="col-md-6">
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Görev Başlığı</label>
+                        <input type="text" class="form-control" [(ngModel)]="title" placeholder="Örn: Müşteri Toplantısı">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Açıklama</label>
+                        <textarea class="form-control" rows="4" [(ngModel)]="description" placeholder="Görev detaylarını giriniz..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Bitiş Tarihi</label>
+                        <input type="date" class="form-control" [(ngModel)]="dueDate">
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Durum</label>
+                        <select class="form-select" [(ngModel)]="status">
+                            <option value="" disabled selected>Seçiniz</option>
+                            <option value="PENDING">Yeni</option>
+                            <option value="IN_PROGRESS">Devam Ediyor</option>
+                            <option value="COMPLETED">Tamamlandı</option>
+                            <option value="CANCELLED">İptal</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Atanacak Personel</label>
+                        <select class="form-select" [(ngModel)]="employeeId">
+                            <option [ngValue]="0" selected>Personel Seçiniz</option>
+                            <option *ngFor="let emp of employeeList" [value]="emp.id">
+                                {{ emp.name }} {{ emp.lastName }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">İlgili Müşteri</label>
+                        <select class="form-select" [(ngModel)]="customerId">
+                            <option [ngValue]="0" selected>Müşteri Seçiniz</option>
+                            <option *ngFor="let cust of customerList" [value]="cust.id">
+                                {{ cust.name }} {{ cust.lastName }}
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                <button class="btn btn-success btn-lg px-5" (click)="save()">
+                    <i class="bi bi-check-circle"></i> KAYDET
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card shadow-lg border-0 mt-5">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0"><i class="bi bi-table"></i> Görev Listesi</h4>
+            <span class="badge bg-light text-dark">{{ taskList.length }} Kayıt</span>
+        </div>
+        
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Başlık</th>
+                            <th>Açıklama</th>
+                            <th>Tarih</th>
+                            <th>Durum</th>
+                            <th>Personel</th>
+                            <th>Müşteri</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let task of taskList">
+                            <td class="fw-bold">{{ task.title }}</td>
+                            <td>{{ task.description }}</td>
+                            
+                            <td>{{ task.dueDate | date:'dd.MM.yyyy' }}</td>
+                            
+                            <td>
+                                <span class="badge rounded-pill" 
+                                      [ngClass]="{
+                                        'bg-success': task.status === 'COMPLETED' || task.status === 'Tamamlandı',
+                                        'bg-warning text-dark': task.status === 'IN_PROGRESS' || task.status === 'Devam Ediyor',
+                                        'bg-info text-dark': task.status === 'NEW' || task.status === 'Yeni',
+                                        'bg-danger': task.status === 'CANCELLED' || task.status === 'İptal'
+                                      }">
+                                    {{ getStatusTR(task.status) }}
+                                </span>
+                            </td>
+
+                            <td><i class="bi bi-person"></i> {{ task.employeeInfo }}</td>
+                            <td><i class="bi bi-building"></i> {{ task.customerInfo }}</td>
+                        </tr>
+
+                        <tr *ngIf="taskList.length === 0">
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                Henüz listelenecek görev bulunamadı.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>

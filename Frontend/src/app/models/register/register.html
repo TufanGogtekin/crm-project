@@ -1,0 +1,58 @@
+<div class="container d-flex justify-content-center align-items-center vh-100 bg-light">
+    
+    <div class="card shadow-lg border-0" style="width: 450px; border-radius: 15px;">
+        
+        <div class="card-header bg-success text-white text-center py-4" 
+             style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+            <h3 class="mb-0 fw-bold">📝 Kayıt Ol</h3>
+            <small>Aramıza Katılın</small>
+        </div>
+
+        <div class="card-body p-4">
+            
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label fw-bold text-muted">Ad</label>
+                    <input type="text" class="form-control" [(ngModel)]="user.firstName" name="firstName" placeholder="Adınız">
+                </div>
+                <div class="col">
+                    <label class="form-label fw-bold text-muted">Soyad</label>
+                    <input type="text" class="form-control" [(ngModel)]="user.lastName" name="lastName" placeholder="Soyadınız">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold text-muted">E-Posta</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-envelope"></i> 📧</span>
+                    <input type="email" class="form-control" [(ngModel)]="user.email" name="email" placeholder="mail@ornek.com">
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold text-muted">Şifre</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-key"></i> 🔑</span>
+                    <input type="password" class="form-control" [(ngModel)]="user.password" name="password" placeholder="******">
+                </div>
+            </div>
+
+            <div class="d-grid">
+                <button class="btn btn-success btn-lg fw-bold" (click)="register()" [disabled]="isLoading">
+                    <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                    {{ isLoading ? 'Kaydediliyor...' : 'KAYDI TAMAMLA' }}
+                </button>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="text-center">
+                <p class="text-muted mb-1">Zaten hesabınız var mı?</p>
+                <a (click)="goToLogin()" class="btn btn-outline-primary btn-sm w-100 fw-bold" style="cursor: pointer;">
+                    🔙 Giriş Yap
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>

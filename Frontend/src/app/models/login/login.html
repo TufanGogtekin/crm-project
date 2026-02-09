@@ -1,0 +1,50 @@
+<div class="container d-flex justify-content-center align-items-center vh-100 bg-light">
+    
+    <div class="card shadow-lg border-0" style="width: 400px; border-radius: 15px;">
+        
+        <div class="card-header bg-primary text-white text-center py-4" 
+             style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+            <h3 class="mb-0 fw-bold">🚀 CRM Giriş</h3>
+            <small>Yönetim Paneline Hoşgeldiniz</small>
+        </div>
+
+        <div class="card-body p-4">
+            
+            <div class="mb-3">
+                <label class="form-label fw-bold text-muted">E-Posta Adresi</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-envelope"></i> 📧</span>
+                    <input type="email" class="form-control" [(ngModel)]="email" placeholder="ornek@sirket.com">
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold text-muted">Şifre</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-lock"></i> 🔑</span>
+                    <input type="password" class="form-control" [(ngModel)]="password" placeholder="******">
+                </div>
+            </div>
+
+            <div class="d-grid">
+                <button class="btn btn-primary btn-lg fw-bold" (click)="login()" [disabled]="isLoading">
+                    <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                    {{ isLoading ? 'Giriş Yapılıyor...' : 'GİRİŞ YAP' }}
+                </button>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="text-center">
+                <div class="text-center">
+            <p class="text-muted mb-1">Hesabınız yok mu?</p>
+    
+                 <a routerLink="/register" class="btn btn-outline-success btn-sm w-100 fw-bold">
+                         📝 Yeni Hesap Oluştur
+                </a>
+            </div>
+            </div>
+
+        </div>
+    </div>
+</div>

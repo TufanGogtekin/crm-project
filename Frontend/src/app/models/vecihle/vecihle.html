@@ -1,0 +1,94 @@
+<div class="container mt-5">
+
+  <h2 class="text-center mb-4">🚗 Araç Yönetimi</h2>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+
+      <div class="card shadow-lg border-0 mb-5">
+        <div class="card-header text-white" style="background-color: #6610f2;">
+          <h5 class="mb-0">Yeni Araç Tanımla</h5>
+        </div>
+
+        <div class="card-body">
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Plaka</label>
+              <div class="input-group">
+                <span class="input-group-text fw-bold">TR</span>
+                <input type="text" class="form-control text-uppercase" placeholder="34 CRM 2026" [(ngModel)]="plate">
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Marka / Model</label>
+              <input type="text" class="form-control" placeholder="Örn: Fiat Egea" [(ngModel)]="model">
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Üretim Yılı</label>
+              <input type="number" class="form-control" placeholder="2023" [(ngModel)]="productionYear">
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-bold">Zimmetlenecek Personel</label>
+              <select class="form-select" [(ngModel)]="employeeId" [disabled]="employeeList.length === 0">
+                <option [ngValue]="0" disabled selected>
+                  {{ employeeList.length === 0 ? 'Personeller Yükleniyor...' : 'Personel Seçiniz...' }}
+                </option>
+                <option *ngFor="let emp of employeeList" [ngValue]="emp.id">
+                  {{ emp.name }} {{ emp.lastName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button type="button" class="btn btn-primary" style="background-color: #6610f2; border: none;"
+              (click)="save()">
+              💾 Kaydet
+            </button>
+
+            <button type="button" class="btn btn-warning text-dark" (click)="list()">
+              📋 Listeyi Getir / Yenile
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <div *ngIf="vecihleList.length > 0" class="card shadow animate__animated animate__fadeIn">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">Filodaki Araçlar ({{ vecihleList.length }} Adet)</h5>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-hover table-striped mb-0">
+            <thead class="table-secondary">
+              <tr>
+                <th>#</th>
+                <th>Plaka</th>
+                <th>Marka / Model</th>
+                <th>Yıl</th>
+                <th>Zimmetli Personel</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let car of vecihleList; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td class="fw-bold text-primary">{{ car.plate }}</td>
+                <td>{{ car.model }}</td>
+                <td>{{ car.productionYear }}</td>
+                <td>
+                  <span class="fw-bold text-dark">
+                    👤 {{ findEmployeeName(car.employeeId) }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

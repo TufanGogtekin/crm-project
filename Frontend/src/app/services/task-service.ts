@@ -13,10 +13,10 @@ export class TaskService {
   private taskPath = "http://localhost:8080/rest/api/task";
 
   saveTask(data: TaskInterface){
-    return this.http.post<TaskInterface>(this.taskPath + "/save", data);
+    return this.http.post<TaskInterface>(`${this.taskPath}/save`, data);
   }
 
   getAllTask(){
-    return this.http.get<TaskInterface>(this.taskPath + "/list");
+    return this.http.get<TaskInterface>(`${this.taskPath}/list`);
   }
 }

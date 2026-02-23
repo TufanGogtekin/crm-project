@@ -45,7 +45,7 @@ public class EmployeeControllerImpl implements IEmployeeController{
 
 	@Override
 	@GetMapping(path = "/find/name/{name}")
-	public List<DtoEmployee> getEmployeeByName(@PathVariable String name) {
+	public List<DtoEmployee> getEmployeeByName(@PathVariable("name") String name) {
 		return employeeService.getEmployeeByName(name);
 	}
 	

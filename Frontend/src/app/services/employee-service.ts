@@ -7,33 +7,24 @@ import { EmployeeInterface } from '../interfaces/employee-interface';
 })
 export class EmployeeService {
 
-  private saveEmployee_path = "http://localhost:8080/rest/api/employee/save";
-
-  private getAllEmployees_path = "http://localhost:8080/rest/api/employee/list";
-
-  private getEmployeeByName_path = "http://localhost:8080/rest/api/employee/find/name/";
-
-  private getEmployeeById_path = "http://localhost:8080/rest/api/employee/find/Id/";
+  private employeePath = "http://localhost:8080/rest/api/employee";
 
   constructor(private http: HttpClient) { }
 
   saveEmployee(data: EmployeeInterface) {
-    return this.http.post(this.saveEmployee_path, data);
+    return this.http.post(`${this.employeePath}/save`, data);
   }
 
   getAllEmployees() {
-    return this.http.get(this.getAllEmployees_path);
+    return this.http.get(`${this.employeePath}/list`);
   }
 
-
   getEmployeeById(id: number) {
-    let byFindId: string = this.getEmployeeById_path + id;
-    return this.http.get<EmployeeInterface>(byFindId);
+    return this.http.get<EmployeeInterface>(`${this.employeePath}/find/${id}`);
   }
 
   getEmployeeByName(name:string){
-    let byFindName: string = this.getEmployeeByName_path + name;
-    return this.http.get<EmployeeInterface[]>(byFindName);
+    return this.http.get<EmployeeInterface[]>(`${this.employeePath}/find/name/${name}`);
   }
 
 }

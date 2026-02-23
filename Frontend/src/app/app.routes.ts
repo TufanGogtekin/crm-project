@@ -12,6 +12,7 @@ import { Offer } from './models/offer/offer';
 import { Contract } from './models/contract/contract';
 import { Task } from './models/task/task';
 import { Activity } from './models/activity/activity';
+import { Product } from './models/product/product';
 
 export const routes: Routes = [
   // 🔥 1. KURAL: Site açılınca direkt Login'e yönlendir
@@ -25,6 +26,7 @@ export const routes: Routes = [
   { path: 'employee', component: Employee },
   { path: 'customer', component: Customer },
   { path: 'vecihle', component: Vecihle },
+  { path: 'product', component: Product},
   { path: 'offer', component: Offer },
   { path: 'contract', component: Contract },
   { path: 'order', component: Order },

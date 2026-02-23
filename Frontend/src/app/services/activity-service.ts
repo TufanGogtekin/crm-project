@@ -6,16 +6,17 @@ import { ActivityInterface } from '../interfaces/activity-interface';
   providedIn: 'root',
 })
 export class ActivityService {
-  constructor(private http: HttpClient) {}
 
-  private activitySavePath = "http://localhost:8080/rest/api/activity/save";
-  private activityListPath = "http://localhost:8080/rest/api/activity/list";
+  private activityPath = "http://localhost:8080/rest/api/activity";
+
+  constructor(private http: HttpClient) { }
 
   saveActivity(data: ActivityInterface) {
-    return this.http.post<ActivityInterface>(this.activitySavePath, data);
+    return this.http.post<ActivityInterface>(`${this.activityPath}/save`, data);
   }
 
-  getAllActivities(){
-    return this.http.get<ActivityInterface[]>(this.activityListPath);
+  getAllActivities() {
+    return this.http.get<ActivityInterface[]>(`${this.activityPath}/list`);
   }
+  
 }

@@ -37,7 +37,7 @@ public class CustomerControllerImpl implements ICustomerController {
 
 	@Override
 	@GetMapping(path = "/find/name/{name}")
-	public List<DtoCustomer> getCustomersByName(@PathVariable String name) {
+	public List<DtoCustomer> getCustomersByName(@PathVariable("name") String name) {
 		return customerService.getCustomersByName(name);
 	}
 	

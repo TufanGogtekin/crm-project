@@ -7,23 +7,20 @@ import { CustomerInterface } from '../interfaces/customer-interface';
 })
 export class CustomerService {
 
-  private SavePath = "http://localhost:8080/rest/api/customer/save";
-  private listAllPath = "http://localhost:8080/rest/api/customer/list"
-  private findByNamePath = "http://localhost:8080/rest/api/customer/find/name/"
+  private customerPath = "http://localhost:8080/rest/api/customer";
 
   constructor(private http: HttpClient) { }
 
   saveCustomer(data: CustomerInterface) {
-    return this.http.post(this.SavePath, data);
+    return this.http.post(`${this.customerPath}/save`, data);
   }
 
   getAllCustomer() {
-    return this.http.get<CustomerInterface[]>(this.listAllPath);
+    return this.http.get<CustomerInterface[]>(`${this.customerPath}/list`);
   }
 
-  getCustomersByName<CustomerInterface>(name:string){
-    let path = this.findByNamePath + name;
-    return this.http.get<CustomerInterface>(path);
+  getCustomersByName<CustomerInterface>(name: string) {
+    return this.http.get<CustomerInterface>(`${this.customerPath}/find/name/${name}`);
   }
 
 }

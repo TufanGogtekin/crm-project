@@ -28,9 +28,9 @@ export class Employee implements EmployeeInterface {
 
   islemBasarili() {
     alert("Kayıt Başarılı!"); 
-    this.list();          // 1. Listeyi yenile
-    this.name = "";       // 2. Adı temizle
-    this.lastName = "";   // 3. Soyadı temizle
+    this.list();         
+    this.name = "";       
+    this.lastName = "";   
   }
 
   save() {
@@ -48,9 +48,8 @@ export class Employee implements EmployeeInterface {
         console.error("Hata oldu:", err);
         if (err.status === 200) {
            console.log("Gizli Başarı: Text formatında cevap geldi.");
-           this.islemBasarili(); // Yine de başarılı say ve işlemleri yap
+           this.islemBasarili();
         } else {
-           // Gerçekten hata varsa (400, 500 vs.)
            alert("Bir hata oluştu. Lütfen konsolu kontrol ediniz.");
         }
       }
@@ -74,12 +73,11 @@ export class Employee implements EmployeeInterface {
 
   list() {
     this.showList = true;
+    this.cdr.detectChanges();
 
-    // Servise diyoruz ki: "Git listeyi getir"
     this.empService.getAllEmployees().subscribe({
       next: (response: any) => {
         console.log("Liste Geldi:", response);
-        // Gelen veriyi (response) bizim listeye (employeeList) eşitliyoruz.
         this.employeeList = response;
         this.cdr.detectChanges();
       },
@@ -94,6 +92,7 @@ export class Employee implements EmployeeInterface {
 
   findByName() {
     this.show = false;
+    this.cdr.detectChanges();
 
     if (!this.searchName) {
       alert("Lütfen geçerli bir name giriniz!");
@@ -103,7 +102,6 @@ export class Employee implements EmployeeInterface {
     this.empService.getEmployeeByName(this.searchName).subscribe({
       next: (response: EmployeeInterface[]) => {
         console.log("Bulundu:", response);
-        // Backend liste dönüyor, eğer liste doluysa İLK elemanı al
         if (Array.isArray(response) && response.length > 0) {
             this.searchResults = response;
             this.show = true;
@@ -112,12 +110,14 @@ export class Employee implements EmployeeInterface {
         else {
              alert("Bu isim ile kayıtlı çalışan bulunamadı!");
              this.show = false;
+             this.cdr.detectChanges();
         }
       },
       error: (err) => {
         console.error("Hata:", err);
         alert("Bu isim ile kayıtlı çalışan bulunamadı!");
-        this.show = false; // Bulunamazsa tabloyu gizle
+        this.show = false;
+        this.cdr.detectChanges();
       }
     });
   }

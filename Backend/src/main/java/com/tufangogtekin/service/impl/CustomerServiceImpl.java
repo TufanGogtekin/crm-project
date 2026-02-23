@@ -33,7 +33,7 @@ public class CustomerServiceImpl implements ICustomerService {
 
 		if (dtoCustomer.getEmployeeId() != null) {
 			Optional<Employee> optionalEmployee = employeeRepository.findById(dtoCustomer.getEmployeeId());
-			if (!optionalEmployee.isEmpty()) {
+			if (optionalEmployee.isPresent()) {
 				customer.setEmployee(optionalEmployee.get());
 			}
 		}

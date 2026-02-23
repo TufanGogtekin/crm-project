@@ -56,7 +56,7 @@ export class Product implements ProductInterface {
         this.cdr.detectChanges();
       },
       error: (err: any) => {
-        console.log("işlem başarısız");
+        console.log("işlem başarısız",err);
       }
     })
   }

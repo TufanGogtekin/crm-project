@@ -1,114 +1,148 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { CustomerInterface } from '../../interfaces/customer-interface';
-import { CustomerService } from '../../services/customer-service';
-import { EmployeeService } from '../../services/employee-service';
-import { EmployeeInterface } from '../../interfaces/employee-interface';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
+// Interface ve Service importlarını kendi dosya yoluna göre kontrol et
+import { CustomerInterface } from '../../interfaces/customer-interface';
+import { EmployeeInterface } from '../../interfaces/employee-interface';
+import { CustomerService } from '../../services/customer-service';
+import { EmployeeService } from '../../services/employee-service';
+
 @Component({
   selector: 'app-customer',
-  imports : [CommonModule,FormsModule,RouterModule],
+  standalone: true, // Angular 17+ kullanıyorsan bu true kalmalı
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './customer.html',
   styleUrl: './customer.css',
 })
-export class Customer implements CustomerInterface, OnInit {
+export class Customer implements OnInit {
+  // FORM DEĞİŞKENLERİ
   name: string = "";
   lastName: string = "";
-  employeeId: number = 0;
-  employeeName: string = "";
-  employeeSurname: string = "";
+  selectedEmployeeId: number = 0; // Dropdown'dan seçilen ID
+
+  // LİSTELER
+  public customerList: CustomerInterface[] = [];      // Tüm müşteriler
+  public customerByNameList: CustomerInterface[] = []; // Arama sonuçları
+  public employeeList: EmployeeInterface[] = [];       // Dropdown için çalışanlar
+
+  // GÖSTERİM KONTROL (BAYRAKLAR)
+  showAll: boolean = false;
+  showSearch: boolean = false;
+  searchName: string = "";
 
   constructor(
     private custService: CustomerService,
-    private cdr: ChangeDetectorRef,
-    private empService: EmployeeService) { }
-  id?: number | undefined;
-  
-
-  public customerList: CustomerInterface[] = [];
-
-  public employeeList: EmployeeInterface[] = [];
-
-  public customerByName: CustomerInterface[] = [];
+    private empService: EmployeeService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.getEmployeesForDropdown();
   }
 
+  // 1. ÇALIŞANLARI DROPDOWN İÇİN ÇEKME
   getEmployeesForDropdown() {
     this.empService.getAllEmployees().subscribe({
-      next: (res: any) => { // Hata almamak için any diyebilirsin veya EmployeeInterface[]
+      next: (res: any) => {
         this.employeeList = res;
         this.cdr.detectChanges();
       },
       error: (err: any) => {
-        console.log("Çalışanlar yüklenemedi", err);
+        console.error("Çalışanlar yüklenemedi", err);
       }
     });
   }
 
+  // 2. KAYDETME İŞLEMİ
   save() {
+    // Dropdown'dan seçilen personelin adını bulalım (Backend istiyorsa)
+    // Eğer backend sadece ID istiyorsa name/surname göndermene gerek yok.
+    // Ama senin interface'ine uyalım:
+    const selectedEmp = this.employeeList.find(e => e.id == this.selectedEmployeeId);
 
     const newCustomer: CustomerInterface = {
       name: this.name,
       lastName: this.lastName,
-      employeeId: this.employeeId,
-      employeeName:this.employeeName,
-      employeeSurname:this.employeeSurname
-    }
+      employeeId: this.selectedEmployeeId,
+      employeeName: selectedEmp ? selectedEmp.name : "",
+      employeeSurname: selectedEmp ? selectedEmp.lastName : ""
+    };
 
     this.custService.saveCustomer(newCustomer).subscribe({
       next: (response) => {
-        console.log("gitti ve cevap geldi", response);
-        alert("kayıt başarılı");
+        alert("Müşteri başarıyla kaydedildi!");
+        // Formu temizle
+        this.name = "";
+        this.lastName = "";
+        this.selectedEmployeeId = 0;
+        this.list(); // Kayıttan sonra listeyi yenile
       },
       error: (err) => {
-        console.error("hata oluşştu", err);
+        console.error("Kayıt hatası:", err);
+        alert("Kayıt yapılamadı.");
       }
-    })
+    });
   }
 
+  // 3. TÜMÜNÜ LİSTELEME
   list() {
+    // Önce diğer ekranları kapat
+    this.showSearch = false;
+    this.showAll = false;
+    this.cdr.detectChanges(); // Angular'a "Arayüzü temizle" diyoruz
 
-    this.show = false;
-    
     this.custService.getAllCustomer().subscribe({
-      next: (Response) => {
-        console.log("listeleme başarılı");
-        this.customerList = Response;
-        this.cdr.detectChanges();
-        this.show = true;
+      next: (res: CustomerInterface[]) => {
+        this.customerList = res;
+
+        // setTimeout: O meşhur NG0100 hatasını çözer.
+        // İşlemi bir sonraki döngüye atar.
+        setTimeout(() => {
+          this.showAll = true;
+          this.cdr.detectChanges();
+        }, 0);
       },
       error: (err) => {
-        console.log("hata var listeleme yapılamadı");
-        alert("işlem hatası: listeleme yapılamadı");
+        console.error("Listeleme hatası", err);
+        alert("Listeleme yapılamadı.");
       }
-    })
-
+    });
   }
 
-  show: boolean = false;
-  searchName: string = "";
+  // 4. İSME GÖRE ARAMA
   findByName() {
-
-    this.show = true;
-    
-    this.custService.getCustomersByName<CustomerInterface>(this.searchName).subscribe({
-      next: (res: any) => {
-        console.log("işlem tamam");
-        this.customerByName = res;
-        this.cdr.detectChanges();
-        this.show = true;
-      },
-      error : (err: any) => {
-        console.log("hata var");
-        alert("işlem başarısız");
-        this.show  = false;
+    if (!this.searchName || this.searchName.trim() === "") {
+      alert("Lütfen aranacak bir isim giriniz.");
+      return;
     }
-    })
-    
-}
 
+    // Listeyi kapat, aramayı açacağız
+    this.showAll = false;
+    this.showSearch = false;
+    this.cdr.detectChanges();
+
+    this.custService.getCustomersByName<CustomerInterface[]>(this.searchName).subscribe({
+      next: (res: any) => {
+        // Backend tek obje mi yoksa liste mi dönüyor emin olalım
+        // Genelde arama sonuçları liste [] döner.
+        this.customerByNameList = Array.isArray(res) ? res : [res];
+
+        if (this.customerByNameList.length === 0) {
+           alert("Bu isimde müşteri bulunamadı.");
+        } else {
+           setTimeout(() => {
+             this.showSearch = true;
+             this.cdr.detectChanges();
+           }, 0);
+        }
+      },
+      error: (err) => {
+        console.error("Arama hatası", err);
+        alert("Arama sırasında hata oluştu veya kayıt bulunamadı.");
+        this.showSearch = false;
+      }
+    });
+  }
 }

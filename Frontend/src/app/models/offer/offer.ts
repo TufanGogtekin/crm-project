@@ -25,7 +25,6 @@ export class Offer implements OnInit {
     items: []
   };
 
-  // Listeler
   customerList: any[] = [];
   productList: any[] = [];
   employeeList: any[] = [];
@@ -46,13 +45,9 @@ export class Offer implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Sadece Dropdownları dolduruyoruz (Müşteri, Ürün, Personel)
     this.getAllCustomers();
     this.getAllProducts();
     this.getAllEmployees();
-
-    // ❌ ARTIK BURADA getAllOffers() ÇAĞIRMIYORUZ!
-    // Sayfa açılınca otomatik listeleme yapmıyoruz.
     this.addNewLine();
   }
 
@@ -71,10 +66,8 @@ export class Offer implements OnInit {
   getAllOffers() {
     console.log("🖱️ Butona basıldı...");
     
-    // 1. HAMLE: Butona basar basmaz tabloyu görünür yap! (Beklemek yok)
     this.isListVisible = true; 
 
-    // 2. HAMLE: Sonra veriyi çekmeye başla
     this.offerService.getAllOffers().subscribe({
       next: (res) => {
         console.log("✅ Veriler Geldi:", res);
@@ -82,7 +75,6 @@ export class Offer implements OnInit {
       },
       error: (err) => {
         console.error("❌ Hata:", err);
-        // Hata olursa tabloyu geri gizle ki kullanıcı tekrar deneyebilsin
         this.isListVisible = false; 
         alert("Veriler çekilemedi!");
       }

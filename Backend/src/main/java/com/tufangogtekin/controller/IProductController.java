@@ -6,8 +6,8 @@ import com.tufangogtekin.dto.DtoProduct;
 
 public interface IProductController {
 
-	public DtoProduct saveProduct(DtoProduct dtoProduct);
+	DtoProduct saveProduct(DtoProduct dtoProduct);
 	
-	public List<DtoProduct> getAllProduct();
+	List<DtoProduct> getAllProduct();
 	
 }

@@ -7,18 +7,16 @@ import { VecihleInterface } from '../interfaces/vecihle-interface';
 })
 export class VecihleService {
 
-  constructor(
-    private http: HttpClient) { }
+  private vecihlePath = "http://localhost:8080/rest/api/vecihle";
 
-  private vecihleSavePath = "http://localhost:8080/rest/api/vecihle/save";
-
-  private vecihleGetAllPath = "http://localhost:8080/rest/api/vecihle/list";
+  constructor(private http: HttpClient) { }
 
   saveVecihle(data: VecihleInterface) {
-    return this.http.post<VecihleInterface>(this.vecihleSavePath, data);
+    return this.http.post<VecihleInterface>(`${this.vecihlePath}/save`, data);
   }
 
-  getAllVecihle(){
-    return this.http.get<VecihleInterface>(this.vecihleGetAllPath);
+  getAllVecihle() {
+    return this.http.get<VecihleInterface>(`${this.vecihlePath}/list`);
   }
+
 }

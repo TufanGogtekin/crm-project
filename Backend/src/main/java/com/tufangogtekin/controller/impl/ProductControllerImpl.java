@@ -35,7 +35,4 @@ public class ProductControllerImpl implements IProductController {
 		
 		return productService.getAllProduct();
 	}
-
-	
-
 }
